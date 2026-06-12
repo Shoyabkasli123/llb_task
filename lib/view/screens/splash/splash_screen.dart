@@ -31,7 +31,6 @@ class _SplashScreenState extends State<SplashScreen> {
     ) {
       _handleConnectivityChange();
     });
-    // Get.find<VideoController>().loadVideos();
   }
 
   Future<void> _initialize() async {

@@ -51,12 +51,7 @@ class ProductController extends GetxController implements GetxService {
 
       if (model.products != null) {
         _productList.addAll(model.products!);
-
-        if (_searchQuery.isEmpty) {
-          _filteredProductList = List.from(_productList);
-        } else {
-          searchProduct(_searchQuery);
-        }
+        applyFilters();
 
         _skip += _pageSize;
 
@@ -72,22 +67,6 @@ class ProductController extends GetxController implements GetxService {
     update();
   }
 
-  // void searchProduct(String query) {
-  //   _searchQuery = query;
-  //
-  //   if (query.isEmpty) {
-  //     _filteredProductList = List.from(_productList);
-  //   } else {
-  //     _filteredProductList = _productList.where((product) {
-  //       return (product.title ?? '').toLowerCase().contains(
-  //         query.toLowerCase(),
-  //       );
-  //     }).toList();
-  //   }
-  //
-  //   update();
-  // }
-
   List<String> get categories {
     final categoryList = _productList
         .map((e) => e.category ?? '')
@@ -99,6 +78,10 @@ class ProductController extends GetxController implements GetxService {
 
     return ['All', ...categoryList];
   }
+  bool get isFilterApplied =>
+      _searchQuery.isNotEmpty ||
+          _selectedCategory != 'All' ||
+          _maxPrice < 5000;
 
   void applyFilters() {
     _filteredProductList = _productList.where((product) {
@@ -110,7 +93,7 @@ class ProductController extends GetxController implements GetxService {
 
       final categoryMatch =
           _selectedCategory == 'All' ||
-          category == _selectedCategory.toLowerCase();
+              category == _selectedCategory.toLowerCase();
 
       final priceMatch = (product.price ?? 0) <= _maxPrice;
 

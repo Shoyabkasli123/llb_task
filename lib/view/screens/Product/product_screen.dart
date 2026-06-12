@@ -25,8 +25,6 @@ class _ProductScreenState extends State<ProductScreen> {
     controller.getProductList(reload: true);
 
     _scrollController.addListener(() {
-      if (controller.searchQuery.isNotEmpty) return;
-
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
         controller.getProductList();
@@ -62,7 +60,7 @@ class _ProductScreenState extends State<ProductScreen> {
           if (productController.productList.isEmpty) {
             return const Center(child: Text("No Product Available"));
           }
-          final isSearching = productController.searchQuery.trim().isNotEmpty;
+          final isFiltering = productController.isFilterApplied;
           return Column(
             children: [
               Padding(
@@ -81,15 +79,6 @@ class _ProductScreenState extends State<ProductScreen> {
                             fillColor: Colors.white,
                             hintText: 'Search products...',
                             prefixIcon: const Icon(Icons.search),
-                            // suffixIcon: _searchController.text.isNotEmpty
-                            //     ? IconButton(
-                            //         onPressed: () {
-                            //           _searchController.clear();
-                            //           productController.searchProduct('');
-                            //         },
-                            //         icon: const Icon(Icons.clear),
-                            //       )
-                            //     : null,
                             suffixIcon: _searchController.text.isNotEmpty
                                 ? IconButton(
                                     onPressed: () {
@@ -194,13 +183,10 @@ class _ProductScreenState extends State<ProductScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         itemCount:
                             productController.filteredProductList.length +
-                            (!isSearching && productController.hasMore ? 1 : 0),
+                            (productController.hasMore ? 1 : 0),
                         itemBuilder: (context, index) {
-                          if (!isSearching &&
-                              index ==
-                                  productController
-                                      .filteredProductList
-                                      .length) {
+                          if (index ==
+                              productController.filteredProductList.length) {
                             return const Padding(
                               padding: EdgeInsets.only(right: 10, left: 10),
                               child: Center(child: CustomLoader()),
